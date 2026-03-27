@@ -1,20 +1,30 @@
 ---
 name: Next Steps — Remaining Tasks
-description: Pending tasks after deployment — certificate design, student onboarding, bulk actions, invitation emails
+description: Pending tasks and testing status as of 2026-03-27
 type: project
 ---
 
-**Completed (2026-03-27):**
-- Platform deployed to Vercel at https://certification-platform-ten.vercel.app
-- Supabase connected and seeded with demo data
-- Admin login confirmed working
+**Awaiting testing (2026-03-28):**
+- Student invite flow: franciscogama98@gmail.com cleaned, admin password reset to admin123456
+- Email rate limit hit on Supabase — retry invite tomorrow
+- Test in incognito window to avoid admin session conflict
 
-**Remaining tasks:**
-1. **Customize the certificate template** — add institutional logo, design layout with Francisco's input
-2. **Create real student accounts** — invite 0–15 students via admin panel
-3. **Bulk admin actions** — reset progress for multiple students, bulk unenroll
-4. **Invitation email** — send email when admin creates a student account
-5. **Add real course content** — videos, module text, questions (Francisco to provide)
+**Completed (2026-03-27):**
+- Platform deployed at https://certification-platform-ten.vercel.app
+- Admin redirect to /admin/dashboard on login
+- Students page, reports, and dashboard showing data (RLS fix)
+- Rich text editor for module content
+- Question save via API routes
+- Certificate with UBI branding + QR verification page
+- Student onboarding: invite → email → setup password → login
+- Delete student functionality
+- Password strength indicator + show/hide toggle
+
+**Still to do:**
+1. Customize certificate template — finalize with Francisco's input
+2. Bulk admin actions — reset/unenroll multiple students
+3. Add real course content — videos, module text, questions
+4. Custom domain (later)
 
 **Future improvements (confirmed but not urgent):**
 - Access expiration dates for students

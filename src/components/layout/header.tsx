@@ -59,7 +59,7 @@ export function Header({ role, userName, locale }: HeaderProps) {
 
         {/* Desktop Navigation */}
         <nav className="hidden items-center gap-1 md:flex">
-          {navLinks.map((link) => (
+          {role !== "admin" && navLinks.map((link) => (
             <Link
               key={link.href}
               href={link.href}
@@ -167,7 +167,7 @@ export function Header({ role, userName, locale }: HeaderProps) {
       {mobileMenuOpen && (
         <div className="border-t bg-white md:hidden">
           <nav className="mx-auto max-w-7xl space-y-1 px-4 pb-4 pt-2">
-            {navLinks.map((link) => (
+            {role !== "admin" && navLinks.map((link) => (
               <Link
                 key={link.href}
                 href={link.href}

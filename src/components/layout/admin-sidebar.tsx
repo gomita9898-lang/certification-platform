@@ -12,7 +12,7 @@ import { Link, usePathname } from "@/lib/i18n/routing";
 import { cn } from "@/lib/utils";
 
 const sidebarLinks = [
-  { href: "/admin", icon: LayoutDashboard, labelKey: "dashboard" as const },
+  { href: "/admin/dashboard", icon: LayoutDashboard, labelKey: "dashboard" as const },
   { href: "/admin/courses", icon: BookOpen, labelKey: "courses" as const },
   { href: "/admin/students", icon: Users, labelKey: "students" as const },
   { href: "/admin/reports", icon: BarChart3, labelKey: "reports" as const },
@@ -29,8 +29,8 @@ export function AdminSidebar() {
         {sidebarLinks.map((link) => {
           const Icon = link.icon;
           const isActive =
-            link.href === "/admin"
-              ? pathname === "/admin"
+            link.href === "/admin/dashboard"
+              ? pathname === "/admin/dashboard" || pathname === "/admin"
               : pathname.startsWith(link.href);
 
           return (
