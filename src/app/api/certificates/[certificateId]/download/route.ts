@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from "next/server";
-import { createClient } from "@/lib/supabase/server";
+import { createClient, createAdminClient } from "@/lib/supabase/server";
 import { generateCertificateHTML } from "@/lib/certificates/generate-pdf";
 
 export async function GET(
@@ -18,8 +18,9 @@ export async function GET(
       return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
     }
 
-    // Fetch certificate with related data
-    const { data: certificate, error } = await supabase
+    // Fetch certificate with related data (use admin client to bypass RLS)
+    const admin = await createAdminClient();
+    const { data: certificate, error } = await admin
       .from("certificates")
       .select(
         `
@@ -57,7 +58,7 @@ export async function GET(
     }
 
     // Fetch app settings for certificate
-    const { data: settings } = await supabase.from("app_settings").select("key, value");
+    const { data: settings } = await admin.from("app_settings").select("key, value");
 
     const settingsMap: Record<string, string> = {};
     settings?.forEach((s) => {
