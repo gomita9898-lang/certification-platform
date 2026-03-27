@@ -112,9 +112,9 @@ function formatDateLocal(date: string | null, locale: string): string {
   }).format(new Date(date));
 }
 
-function filterByDateRange<T extends Record<string, unknown>>(
+function filterByDateRange<T>(
   data: T[],
-  dateField: string,
+  dateField: keyof T,
   from: string,
   to: string,
 ): T[] {

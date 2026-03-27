@@ -81,7 +81,7 @@ export default async function AdminReportsPage({
       email: (profile?.email as string) ?? "",
       courseName: course ? getLocalizedField(course, "title", locale) : "",
       enrolledDate: e.enrolled_at as string,
-      status,
+      status: status as "active" | "completed" | "certified",
       completionDate: (e.completed_at as string) ?? null,
     };
   });

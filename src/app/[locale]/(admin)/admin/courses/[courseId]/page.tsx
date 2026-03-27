@@ -26,6 +26,7 @@ import {
   GripVertical,
   BookOpen,
   ExternalLink,
+  FileSpreadsheet,
 } from "lucide-react";
 
 interface CourseData {
@@ -423,10 +424,18 @@ export default function AdminCourseDetailPage() {
         <Card>
           <CardHeader className="flex flex-row items-center justify-between">
             <CardTitle className="text-lg">{t("modules")}</CardTitle>
-            <Button size="sm" onClick={handleAddModule}>
-              <Plus className="mr-1.5 h-3.5 w-3.5" />
-              {t("addModule")}
-            </Button>
+            <div className="flex gap-2">
+              <Button variant="outline" size="sm" asChild>
+                <Link href={`/admin/courses/${courseId}/import-questions`}>
+                  <FileSpreadsheet className="mr-1.5 h-3.5 w-3.5" />
+                  {t("import.importQuestions")}
+                </Link>
+              </Button>
+              <Button size="sm" onClick={handleAddModule}>
+                <Plus className="mr-1.5 h-3.5 w-3.5" />
+                {t("addModule")}
+              </Button>
+            </div>
           </CardHeader>
           <CardContent>
             {modules.length === 0 ? (
