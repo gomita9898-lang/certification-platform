@@ -24,30 +24,27 @@ export default async function AdminStudentsPage({
 
   const admin = await createAdminClient();
 
-  // Get all students with their enrollment counts
+  // Get all students
   const { data: students } = await admin
     .from("profiles")
-    .select(
-      "id, full_name, email, created_at, enrollments(id, completed_at, enrolled_at)"
-    )
+    .select("id, full_name, email, created_at")
     .eq("role", "student")
-    .order("created_at", { ascending: false }) as { data: Array<{
-      id: string;
-      full_name: string;
-      email: string;
-      created_at: string;
-      enrollments: { id: string; completed_at: string | null; enrolled_at: string }[];
-    }> | null };
+    .order("created_at", { ascending: false });
+
+  // Get all enrollments separately
+  const { data: allEnrollments } = await admin
+    .from("enrollments")
+    .select("id, user_id, course_id, enrolled_at, completed_at");
 
   const studentList = (students ?? []).map((student) => {
-    const enrollments = Array.isArray(student.enrollments)
-      ? student.enrollments
-      : [];
+    const enrollments = (allEnrollments ?? []).filter(
+      (e) => e.user_id === student.id
+    );
     const completedCount = enrollments.filter(
-      (e: { completed_at: string | null }) => e.completed_at !== null
+      (e) => e.completed_at !== null
     ).length;
-    const lastEnrollment = enrollments.sort(
-      (a: { enrolled_at: string }, b: { enrolled_at: string }) =>
+    const lastEnrollment = [...enrollments].sort(
+      (a, b) =>
         new Date(b.enrolled_at).getTime() - new Date(a.enrolled_at).getTime()
     )[0];
 
