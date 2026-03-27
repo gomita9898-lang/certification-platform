@@ -1,7 +1,10 @@
 {
   "permissions": {
     "allow": [
-      "Read(//c/Users/FranciscoGama/OneDrive/**)"
+      "Read(//c/Users/FranciscoGama/OneDrive/**)",
+      "WebFetch(domain:certification-platform-a2gr.vercel.app)",
+      "Bash(grep -E \"\"\"@radix-ui|\"\"lucide-react|\"\"next-intl|\"\"@supabase\" package.json)",
+      "WebFetch(domain:certification-platform-ten.vercel.app)"
     ]
   }
 }
