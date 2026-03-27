@@ -22,6 +22,16 @@ import { Badge } from "@/components/ui/badge";
 import { Progress } from "@/components/ui/progress";
 import { Separator } from "@/components/ui/separator";
 import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+} from "@/components/ui/alert-dialog";
+import {
   ChevronLeft,
   ChevronRight,
   CheckCircle,
@@ -76,6 +86,7 @@ export default function ExamPage() {
   const [courseTitle, setCourseTitle] = useState("");
   const [passThreshold, setPassThreshold] = useState(80);
   const [error, setError] = useState<string | null>(null);
+  const [showSubmitConfirm, setShowSubmitConfirm] = useState(false);
 
   const fetchQuestions = useCallback(async () => {
     setLoading(true);
@@ -190,15 +201,12 @@ export default function ExamPage() {
     }));
   }
 
-  async function handleSubmit() {
-    const unansweredCount = questions.filter((q) => !answers[q.id]).length;
-    if (unansweredCount > 0) {
-      const confirmMsg = `${t("unanswered", { count: unansweredCount })}\n\n${t("confirmSubmit")}`;
-      if (!window.confirm(confirmMsg)) return;
-    } else {
-      if (!window.confirm(t("confirmSubmit"))) return;
-    }
+  function handleSubmit() {
+    setShowSubmitConfirm(true);
+  }
 
+  async function confirmSubmit() {
+    setShowSubmitConfirm(false);
     setSubmitting(true);
     const supabase = createClient();
 
@@ -438,14 +446,15 @@ export default function ExamPage() {
 
         {/* Actions */}
         <div className="mt-8 flex flex-wrap items-center gap-3">
-          {result.passed && result.certificateId ? (
+          {result.passed && result.certificateId && (
             <Button asChild>
               <Link href={`/certificates/${result.certificateId}`}>
                 <Award className="mr-2 h-4 w-4" />
                 {t("viewCertificate")}
               </Link>
             </Button>
-          ) : (
+          )}
+          {!result.passed && (
             <Button variant="outline" onClick={handleRetake}>
               <RotateCcw className="mr-2 h-4 w-4" />
               {t("tryAgain")}
@@ -501,11 +510,14 @@ export default function ExamPage() {
           <CardTitle className="text-lg">{currentQuestion.question}</CardTitle>
         </CardHeader>
         <CardContent>
-          <div className="space-y-3">
+          <div className="space-y-3" role="radiogroup" aria-label={t("selectAnswer")}>
             {currentQuestion.options.map((option) => (
               <button
                 key={option.id}
                 onClick={() => handleSelectAnswer(option.id)}
+                role="radio"
+                aria-checked={selectedAnswer === option.id}
+                aria-label={option.text}
                 className={`w-full rounded-lg border px-4 py-3 text-left text-sm transition-colors hover:border-primary/50 hover:bg-accent ${
                   selectedAnswer === option.id
                     ? "border-primary bg-primary/5 font-medium"
@@ -553,6 +565,25 @@ export default function ExamPage() {
           )}
         </CardFooter>
       </Card>
+
+      <AlertDialog open={showSubmitConfirm} onOpenChange={setShowSubmitConfirm}>
+        <AlertDialogContent>
+          <AlertDialogHeader>
+            <AlertDialogTitle>{t("submitExamTitle")}</AlertDialogTitle>
+            <AlertDialogDescription>
+              {questions.filter((q) => !answers[q.id]).length > 0
+                ? `${t("unanswered", { count: questions.filter((q) => !answers[q.id]).length })} ${t("submitExamDescription")}`
+                : t("submitExamDescription")}
+            </AlertDialogDescription>
+          </AlertDialogHeader>
+          <AlertDialogFooter>
+            <AlertDialogCancel>{tCommon("cancel")}</AlertDialogCancel>
+            <AlertDialogAction onClick={confirmSubmit}>
+              {t("submitExam")}
+            </AlertDialogAction>
+          </AlertDialogFooter>
+        </AlertDialogContent>
+      </AlertDialog>
     </div>
   );
 }

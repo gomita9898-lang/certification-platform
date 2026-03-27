@@ -14,7 +14,7 @@ import {
 import { Button } from "@/components/ui/button";
 import { Progress } from "@/components/ui/progress";
 import { Badge } from "@/components/ui/badge";
-import { BookOpen, Award, ArrowRight } from "lucide-react";
+import { BookOpen, Award, ArrowRight, GraduationCap, PlayCircle, ClipboardCheck, FileCheck } from "lucide-react";
 
 export default async function DashboardPage({
   params,
@@ -118,6 +118,43 @@ export default async function DashboardPage({
         <p className="mt-2 text-muted-foreground">{t("title")}</p>
       </div>
 
+      {/* Onboarding hints for first-time students */}
+      {courses.length > 0 && courses.every((c) => c.completed_modules === 0 && !c.has_certificate) && (
+        <Card className="mb-10 border-primary/20 bg-primary/5">
+          <CardContent className="px-6 py-5">
+            <h3 className="font-merriweather text-lg font-semibold text-primary">
+              {t("onboardingTitle")}
+            </h3>
+            <p className="mt-1 text-sm text-muted-foreground">
+              {t("onboardingSubtitle")}
+            </p>
+            <div className="mt-4 grid gap-3 sm:grid-cols-3">
+              <div className="flex items-start gap-3 rounded-md bg-background p-3">
+                <PlayCircle className="mt-0.5 h-5 w-5 shrink-0 text-primary" />
+                <div>
+                  <p className="text-sm font-medium">{t("onboardingStep1Title")}</p>
+                  <p className="text-xs text-muted-foreground">{t("onboardingStep1Desc")}</p>
+                </div>
+              </div>
+              <div className="flex items-start gap-3 rounded-md bg-background p-3">
+                <ClipboardCheck className="mt-0.5 h-5 w-5 shrink-0 text-primary" />
+                <div>
+                  <p className="text-sm font-medium">{t("onboardingStep2Title")}</p>
+                  <p className="text-xs text-muted-foreground">{t("onboardingStep2Desc")}</p>
+                </div>
+              </div>
+              <div className="flex items-start gap-3 rounded-md bg-background p-3">
+                <FileCheck className="mt-0.5 h-5 w-5 shrink-0 text-primary" />
+                <div>
+                  <p className="text-sm font-medium">{t("onboardingStep3Title")}</p>
+                  <p className="text-xs text-muted-foreground">{t("onboardingStep3Desc")}</p>
+                </div>
+              </div>
+            </div>
+          </CardContent>
+        </Card>
+      )}
+
       <section>
         <h2 className="mb-6 font-merriweather text-xl font-semibold text-foreground">
           {t("myCourses")}
@@ -126,9 +163,12 @@ export default async function DashboardPage({
         {courses.length === 0 ? (
           <Card className="border-dashed">
             <CardContent className="flex flex-col items-center justify-center py-16">
-              <BookOpen className="mb-4 h-12 w-12 text-muted-foreground/50" />
-              <p className="text-center text-muted-foreground">
+              <GraduationCap className="mb-4 h-12 w-12 text-muted-foreground/50" />
+              <p className="text-center font-medium text-muted-foreground">
                 {t("noCourses")}
+              </p>
+              <p className="mt-2 max-w-sm text-center text-sm text-muted-foreground/70">
+                {t("noCoursesHint")}
               </p>
             </CardContent>
           </Card>

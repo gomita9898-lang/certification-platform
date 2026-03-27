@@ -39,6 +39,9 @@
     "login": "Iniciar sessão",
     "loginTitle": "Bem-vindo à Plataforma de Certificação",
     "loginSubtitle": "Introduza as suas credenciais para aceder à plataforma",
+    "inviteOnly": "Esta plataforma é exclusiva para alunos convidados. Se recebeu um convite por e-mail, utilize as credenciais fornecidas.",
+    "showPassword": "Mostrar palavra-passe",
+    "hidePassword": "Ocultar palavra-passe",
     "email": "Endereço de e-mail",
     "password": "Palavra-passe",
     "forgotPassword": "Esqueceu a palavra-passe?",
@@ -71,6 +74,15 @@
     "startCourse": "Iniciar curso",
     "viewCertificate": "Ver certificado",
     "noCourses": "Ainda não está inscrito em nenhum curso.",
+    "noCoursesHint": "Se recebeu um convite, o seu curso aparecerá aqui automaticamente. Contacte o administrador se necessitar de ajuda.",
+    "onboardingTitle": "Como funciona a plataforma",
+    "onboardingSubtitle": "Siga estes passos para concluir o curso e obter o seu certificado.",
+    "onboardingStep1Title": "1. Estude os módulos",
+    "onboardingStep1Desc": "Veja os vídeos e leia o conteúdo de cada módulo pela ordem indicada.",
+    "onboardingStep2Title": "2. Complete os questionários",
+    "onboardingStep2Desc": "Responda ao questionário no final de cada módulo para desbloquear o seguinte.",
+    "onboardingStep3Title": "3. Passe o exame final",
+    "onboardingStep3Desc": "Após completar todos os módulos, faça o exame final para obter o seu certificado.",
     "courseCompleted": "Curso concluído",
     "examPending": "Exame final disponível",
     "inProgress": "Em progresso"
@@ -125,7 +137,11 @@
     "viewCertificate": "Ver certificado",
     "returnToCourse": "Voltar ao curso",
     "confirmSubmit": "Tem a certeza de que deseja submeter? Esta ação não pode ser revertida.",
-    "unanswered": "{count} pergunta(s) sem resposta"
+    "unanswered": "{count} pergunta(s) sem resposta",
+    "submitQuizTitle": "Submeter questionário?",
+    "submitQuizDescription": "Tem a certeza de que deseja submeter as suas respostas? Esta ação não pode ser revertida.",
+    "submitExamTitle": "Submeter exame final?",
+    "submitExamDescription": "Tem a certeza de que deseja submeter as suas respostas? Esta ação não pode ser revertida."
   },
   "certificate": {
     "title": "Certificado de Conclusão",
@@ -233,6 +249,9 @@
       "resetError": "Falha ao repor progresso"
     },
     "reports": "Relatórios",
+    "navigation": "Navegação",
+    "menuOpen": "Abrir menu",
+    "menuClose": "Fechar menu",
     "import": {
       "title": "Importar Perguntas",
       "downloadTemplate": "Transferir Modelo",

@@ -2,7 +2,7 @@
 
 import { useState } from "react";
 import { useTranslations } from "next-intl";
-import { GraduationCap } from "lucide-react";
+import { GraduationCap, Eye, EyeOff, LogIn } from "lucide-react";
 import { createClient } from "@/lib/supabase/client";
 import { useRouter, Link } from "@/lib/i18n/routing";
 import { Button } from "@/components/ui/button";
@@ -24,6 +24,7 @@ export default function LoginPage() {
 
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+  const [showPassword, setShowPassword] = useState(false);
   const [error, setError] = useState("");
   const [loading, setLoading] = useState(false);
 
@@ -70,7 +71,7 @@ export default function LoginPage() {
           <GraduationCap className="h-8 w-8 text-primary-foreground" />
         </div>
         <div className="space-y-2">
-          <CardTitle className="font-[family-name:var(--font-merriweather)] text-2xl font-bold text-primary">
+          <CardTitle className="font-merriweather text-2xl font-bold text-primary">
             {tCommon("appName")}
           </CardTitle>
           <CardDescription className="text-base">
@@ -81,8 +82,13 @@ export default function LoginPage() {
 
       <form onSubmit={handleLogin}>
         <CardContent className="space-y-4">
+          {/* Platform info for first-time visitors */}
+          <div className="rounded-md bg-muted/50 p-3 text-center text-xs text-muted-foreground">
+            {t("inviteOnly")}
+          </div>
+
           {error && (
-            <div className="rounded-md bg-destructive/10 p-3 text-center text-sm text-destructive">
+            <div className="rounded-md bg-destructive/10 p-3 text-center text-sm text-destructive" role="alert">
               {error}
             </div>
           )}
@@ -97,32 +103,53 @@ export default function LoginPage() {
               onChange={(e) => setEmail(e.target.value)}
               required
               autoComplete="email"
+              autoFocus
             />
           </div>
 
           <div className="space-y-2">
-            <Label htmlFor="password">{t("password")}</Label>
-            <Input
-              id="password"
-              type="password"
-              value={password}
-              onChange={(e) => setPassword(e.target.value)}
-              required
-              autoComplete="current-password"
-            />
+            <div className="flex items-center justify-between">
+              <Label htmlFor="password">{t("password")}</Label>
+              <Link
+                href="/reset-password"
+                className="text-xs text-primary hover:underline"
+              >
+                {t("forgotPassword")}
+              </Link>
+            </div>
+            <div className="relative">
+              <Input
+                id="password"
+                type={showPassword ? "text" : "password"}
+                value={password}
+                onChange={(e) => setPassword(e.target.value)}
+                required
+                autoComplete="current-password"
+                className="pr-10"
+              />
+              <button
+                type="button"
+                onClick={() => setShowPassword(!showPassword)}
+                className="absolute right-3 top-1/2 -translate-y-1/2 text-muted-foreground hover:text-foreground"
+                aria-label={showPassword ? t("hidePassword") : t("showPassword")}
+              >
+                {showPassword ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
+              </button>
+            </div>
           </div>
         </CardContent>
 
-        <CardFooter className="flex flex-col gap-4">
+        <CardFooter>
           <Button type="submit" className="w-full" size="lg" disabled={loading}>
-            {loading ? tCommon("loading") : t("login")}
+            {loading ? (
+              tCommon("loading")
+            ) : (
+              <>
+                <LogIn className="mr-2 h-4 w-4" />
+                {t("login")}
+              </>
+            )}
           </Button>
-          <Link
-            href="/reset-password"
-            className="text-sm text-muted-foreground transition-colors hover:text-primary"
-          >
-            {t("forgotPassword")}
-          </Link>
         </CardFooter>
       </form>
     </Card>

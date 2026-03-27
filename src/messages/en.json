@@ -39,6 +39,9 @@
     "login": "Log in",
     "loginTitle": "Welcome to the Certification Platform",
     "loginSubtitle": "Enter your credentials to access the platform",
+    "inviteOnly": "This platform is exclusive to invited students. If you received an invitation email, use the credentials provided.",
+    "showPassword": "Show password",
+    "hidePassword": "Hide password",
     "email": "Email address",
     "password": "Password",
     "forgotPassword": "Forgot your password?",
@@ -71,6 +74,15 @@
     "startCourse": "Start course",
     "viewCertificate": "View certificate",
     "noCourses": "You are not enrolled in any courses yet.",
+    "noCoursesHint": "If you received an invitation, your course will appear here automatically. Contact the administrator if you need help.",
+    "onboardingTitle": "How the platform works",
+    "onboardingSubtitle": "Follow these steps to complete the course and earn your certificate.",
+    "onboardingStep1Title": "1. Study the modules",
+    "onboardingStep1Desc": "Watch the videos and read the content of each module in the indicated order.",
+    "onboardingStep2Title": "2. Complete the quizzes",
+    "onboardingStep2Desc": "Answer the quiz at the end of each module to unlock the next one.",
+    "onboardingStep3Title": "3. Pass the final exam",
+    "onboardingStep3Desc": "After completing all modules, take the final exam to earn your certificate.",
     "courseCompleted": "Course completed",
     "examPending": "Final exam available",
     "inProgress": "In progress"
@@ -125,7 +137,11 @@
     "viewCertificate": "View certificate",
     "returnToCourse": "Return to course",
     "confirmSubmit": "Are you sure you want to submit? This action cannot be undone.",
-    "unanswered": "{count} unanswered question(s)"
+    "unanswered": "{count} unanswered question(s)",
+    "submitQuizTitle": "Submit quiz?",
+    "submitQuizDescription": "Are you sure you want to submit your answers? This action cannot be undone.",
+    "submitExamTitle": "Submit final exam?",
+    "submitExamDescription": "Are you sure you want to submit your answers? This action cannot be undone."
   },
   "certificate": {
     "title": "Certificate of Completion",
@@ -233,6 +249,9 @@
       "resetError": "Failed to reset progress"
     },
     "reports": "Reports",
+    "navigation": "Navigation",
+    "menuOpen": "Open menu",
+    "menuClose": "Close menu",
     "import": {
       "title": "Import Questions",
       "downloadTemplate": "Download Template",

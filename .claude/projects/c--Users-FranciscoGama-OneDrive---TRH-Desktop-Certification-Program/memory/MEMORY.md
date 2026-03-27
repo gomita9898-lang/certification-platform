@@ -1,4 +1,7 @@
 - [Francisco Gama — User Profile](user_profile.md) — Non-technical Medicine/Oncology lecturer, Portugal, prefers plain language
 - [Certification Platform Overview](project_certification_platform.md) — Medical education platform with modules, quizzes, certificates, admin panel
-- [Next Steps After Content](project_next_steps.md) — Deploy to Vercel, customize certificate template, create real student accounts
+- [Next Steps](project_next_steps.md) — Testing invite flow, certificate design, bulk actions, real content
 - [Admin Improvements](project_admin_improvements.md) — Reset progress, preview workflow, bulk actions, reports/export, question import
+- [Engineering Standards](feedback_engineering_standards.md) — Deliver + improve touched area, internal review checklist, tiered improvements
+- [Deployment Workflow](feedback_deployment.md) — Batch changes before pushing, don't deploy after every small fix
+- [Test Before Deploy](feedback_testing.md) — Run tests and verify locally before pushing to avoid deploying bugs

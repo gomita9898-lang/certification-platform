@@ -18,6 +18,16 @@ import { Badge } from "@/components/ui/badge";
 import { Progress } from "@/components/ui/progress";
 import { Separator } from "@/components/ui/separator";
 import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+} from "@/components/ui/alert-dialog";
+import {
   ChevronLeft,
   ChevronRight,
   CheckCircle,
@@ -70,6 +80,7 @@ export default function QuizPage() {
   const [result, setResult] = useState<QuizResult | null>(null);
   const [moduleTitle, setModuleTitle] = useState("");
   const [error, setError] = useState<string | null>(null);
+  const [showSubmitConfirm, setShowSubmitConfirm] = useState(false);
 
   const fetchQuestions = useCallback(async () => {
     setLoading(true);
@@ -151,15 +162,12 @@ export default function QuizPage() {
     }));
   }
 
-  async function handleSubmit() {
-    const unansweredCount = questions.filter((q) => !answers[q.id]).length;
-    if (unansweredCount > 0) {
-      const confirmMsg = `${t("unanswered", { count: unansweredCount })}\n\n${t("confirmSubmit")}`;
-      if (!window.confirm(confirmMsg)) return;
-    } else {
-      if (!window.confirm(t("confirmSubmit"))) return;
-    }
+  function handleSubmit() {
+    setShowSubmitConfirm(true);
+  }
 
+  async function confirmSubmit() {
+    setShowSubmitConfirm(false);
     setSubmitting(true);
     const supabase = createClient();
 
@@ -396,10 +404,6 @@ export default function QuizPage() {
 
         {/* Actions */}
         <div className="mt-8 flex flex-wrap items-center gap-3">
-          <Button variant="outline" onClick={handleRetake}>
-            <RotateCcw className="mr-2 h-4 w-4" />
-            {t("tryAgain")}
-          </Button>
           {result.passed && (
             <Button asChild>
               <Link href={`/courses/${courseId}`}>
@@ -408,6 +412,10 @@ export default function QuizPage() {
               </Link>
             </Button>
           )}
+          <Button variant="outline" onClick={handleRetake}>
+            <RotateCcw className="mr-2 h-4 w-4" />
+            {t("tryAgain")}
+          </Button>
           <Button asChild variant="ghost">
             <Link href={`/courses/${courseId}`}>
               {t("returnToCourse")}
@@ -457,11 +465,14 @@ export default function QuizPage() {
           <CardTitle className="text-lg">{currentQuestion.question}</CardTitle>
         </CardHeader>
         <CardContent>
-          <div className="space-y-3">
+          <div className="space-y-3" role="radiogroup" aria-label={t("selectAnswer")}>
             {currentQuestion.options.map((option) => (
               <button
                 key={option.id}
                 onClick={() => handleSelectAnswer(option.id)}
+                role="radio"
+                aria-checked={selectedAnswer === option.id}
+                aria-label={option.text}
                 className={`w-full rounded-lg border px-4 py-3 text-left text-sm transition-colors hover:border-primary/50 hover:bg-accent ${
                   selectedAnswer === option.id
                     ? "border-primary bg-primary/5 font-medium"
@@ -509,6 +520,25 @@ export default function QuizPage() {
           )}
         </CardFooter>
       </Card>
+
+      <AlertDialog open={showSubmitConfirm} onOpenChange={setShowSubmitConfirm}>
+        <AlertDialogContent>
+          <AlertDialogHeader>
+            <AlertDialogTitle>{t("submitQuizTitle")}</AlertDialogTitle>
+            <AlertDialogDescription>
+              {questions.filter((q) => !answers[q.id]).length > 0
+                ? `${t("unanswered", { count: questions.filter((q) => !answers[q.id]).length })} ${t("submitQuizDescription")}`
+                : t("submitQuizDescription")}
+            </AlertDialogDescription>
+          </AlertDialogHeader>
+          <AlertDialogFooter>
+            <AlertDialogCancel>{tCommon("cancel")}</AlertDialogCancel>
+            <AlertDialogAction onClick={confirmSubmit}>
+              {t("submitQuiz")}
+            </AlertDialogAction>
+          </AlertDialogFooter>
+        </AlertDialogContent>
+      </AlertDialog>
     </div>
   );
 }
