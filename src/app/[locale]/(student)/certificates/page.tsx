@@ -131,10 +131,14 @@ export default async function CertificatesPage({
                   </Link>
                 </Button>
                 <Button asChild variant="ghost" size="sm">
-                  <Link href={`/certificates/${cert.id}`}>
+                  <a
+                    href={`/api/certificates/${cert.id}/download`}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                  >
                     <Download className="mr-2 h-4 w-4" />
                     {t("download")}
-                  </Link>
+                  </a>
                 </Button>
               </CardFooter>
             </Card>

@@ -144,9 +144,15 @@ export default async function CertificateDetailPage({
 
       {/* Download Button */}
       <div className="mt-8 flex justify-center">
-        <Button size="lg">
-          <Download className="mr-2 h-5 w-5" />
-          {t("download")}
+        <Button size="lg" asChild>
+          <a
+            href={`/api/certificates/${certificateId}/download`}
+            target="_blank"
+            rel="noopener noreferrer"
+          >
+            <Download className="mr-2 h-5 w-5" />
+            {t("download")}
+          </a>
         </Button>
       </div>
     </div>
