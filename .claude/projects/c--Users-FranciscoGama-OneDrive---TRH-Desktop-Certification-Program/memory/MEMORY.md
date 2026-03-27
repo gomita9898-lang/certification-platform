@@ -1,0 +1,4 @@
+- [Francisco Gama — User Profile](user_profile.md) — Non-technical Medicine/Oncology lecturer, Portugal, prefers plain language
+- [Certification Platform Overview](project_certification_platform.md) — Medical education platform with modules, quizzes, certificates, admin panel
+- [Next Steps After Content](project_next_steps.md) — Deploy to Vercel, customize certificate template, create real student accounts
+- [Admin Improvements](project_admin_improvements.md) — Reset progress, preview workflow, bulk actions, reports/export, question import
