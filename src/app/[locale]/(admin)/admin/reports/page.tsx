@@ -3,6 +3,7 @@ import { createAdminClient } from "@/lib/supabase/server";
 import { FileSpreadsheet } from "lucide-react";
 import { getLocalizedField } from "@/lib/utils";
 import { ReportsClient } from "@/components/admin/reports-client";
+import { Breadcrumb } from "@/components/admin/breadcrumb";
 
 export default async function AdminReportsPage({
   params,
@@ -183,6 +184,7 @@ export default async function AdminReportsPage({
 
   return (
     <div className="space-y-8">
+      <Breadcrumb items={[{ label: t("title") }]} />
       <div>
         <h1 className="font-merriweather flex items-center gap-3 text-3xl font-bold tracking-tight">
           <FileSpreadsheet className="h-8 w-8" />

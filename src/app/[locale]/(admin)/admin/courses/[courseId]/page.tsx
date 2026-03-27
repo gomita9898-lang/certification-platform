@@ -28,6 +28,7 @@ import {
   ExternalLink,
   FileSpreadsheet,
 } from "lucide-react";
+import { Breadcrumb } from "@/components/admin/breadcrumb";
 
 interface CourseData {
   id: string;
@@ -278,6 +279,13 @@ export default function AdminCourseDetailPage() {
           {toast.message}
         </div>
       )}
+
+      <Breadcrumb
+        items={[
+          { label: t("courses"), href: "/admin/courses" },
+          { label: isNew ? tCommon("create") : (locale === "en" ? course.title_en : course.title_pt) || t("courseSettings") },
+        ]}
+      />
 
       <div>
         <h1 className="font-merriweather text-3xl font-bold tracking-tight">

@@ -5,6 +5,7 @@ import { useRouter } from "next/navigation";
 import { useTranslations } from "next-intl";
 import { RotateCcw, ChevronRight, Trash2, BookOpen, FileText } from "lucide-react";
 import { Button } from "@/components/ui/button";
+import { useToast } from "@/components/ui/toast";
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -50,6 +51,7 @@ export function ResetProgressMenu({
   const t = useTranslations("admin");
   const tCommon = useTranslations("common");
   const router = useRouter();
+  const { showToast } = useToast();
 
   const [dialogOpen, setDialogOpen] = useState(false);
   const [resetType, setResetType] = useState<ResetType>("all");
@@ -109,10 +111,11 @@ export function ResetProgressMenu({
         throw new Error(data.error || "Reset failed");
       }
 
+      showToast(t("resetProgress.resetSuccess"), "success");
       router.refresh();
     } catch (error) {
       console.error("Reset progress error:", error);
-      alert(error instanceof Error ? error.message : "An error occurred");
+      showToast(error instanceof Error ? error.message : t("resetProgress.resetError"), "error");
     } finally {
       setIsLoading(false);
       setDialogOpen(false);

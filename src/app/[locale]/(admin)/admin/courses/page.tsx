@@ -11,6 +11,7 @@ import { Badge } from "@/components/ui/badge";
 import { Link } from "@/lib/i18n/routing";
 import { Plus, Pencil, Eye, BookOpen, Users } from "lucide-react";
 import { getLocalizedField } from "@/lib/utils";
+import { Breadcrumb } from "@/components/admin/breadcrumb";
 
 export default async function AdminCoursesPage({
   params,
@@ -52,6 +53,7 @@ export default async function AdminCoursesPage({
 
   return (
     <div className="space-y-8">
+      <Breadcrumb items={[{ label: t("courses") }]} />
       <div className="flex items-center justify-between">
         <div>
           <h1 className="font-merriweather text-3xl font-bold tracking-tight">

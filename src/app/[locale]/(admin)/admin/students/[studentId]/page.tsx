@@ -13,6 +13,7 @@ import { Separator } from "@/components/ui/separator";
 import { Award, BookOpen, BarChart3 } from "lucide-react";
 import { formatDate, formatPercentage, getLocalizedField } from "@/lib/utils";
 import { ResetProgressMenu } from "@/components/admin/reset-progress-menu";
+import { Breadcrumb } from "@/components/admin/breadcrumb";
 
 export default async function AdminStudentDetailPage({
   params,
@@ -275,6 +276,12 @@ export default async function AdminStudentDetailPage({
 
   return (
     <div className="space-y-8">
+      <Breadcrumb
+        items={[
+          { label: t("students"), href: "/admin/students" },
+          { label: student.full_name },
+        ]}
+      />
       {/* Student header */}
       <div>
         <h1 className="font-merriweather text-3xl font-bold tracking-tight">

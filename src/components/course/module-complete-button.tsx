@@ -3,8 +3,10 @@
 import { useState } from "react";
 import { useRouter } from "@/lib/i18n/routing";
 import { createClient } from "@/lib/supabase/client";
+import { useTranslations } from "next-intl";
 import { Button } from "@/components/ui/button";
 import { CheckCircle, Loader2 } from "lucide-react";
+import { useToast } from "@/components/ui/toast";
 
 interface ModuleCompleteButtonProps {
   moduleId: string;
@@ -19,6 +21,8 @@ export function ModuleCompleteButton({
 }: ModuleCompleteButtonProps) {
   const [loading, setLoading] = useState(false);
   const router = useRouter();
+  const t = useTranslations("course");
+  const { showToast } = useToast();
 
   async function handleComplete() {
     setLoading(true);
@@ -57,6 +61,7 @@ export function ModuleCompleteButton({
       });
     }
 
+    showToast(t("moduleCompleted"), "success");
     router.refresh();
     setLoading(false);
   }

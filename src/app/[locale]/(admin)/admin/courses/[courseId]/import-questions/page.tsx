@@ -32,6 +32,7 @@ import {
   parseQuestionFile,
   generateQuestionTemplate,
 } from "@/lib/question-import";
+import { Breadcrumb } from "@/components/admin/breadcrumb";
 
 export default function ImportQuestionsPage() {
   const params = useParams();
@@ -217,6 +218,14 @@ export default function ImportQuestionsPage() {
           {toast.message}
         </div>
       )}
+
+      <Breadcrumb
+        items={[
+          { label: t("courses"), href: "/admin/courses" },
+          { label: courseName || t("courses"), href: `/admin/courses/${courseId}` },
+          { label: t("import.title") },
+        ]}
+      />
 
       {/* Header */}
       <div className="flex items-center gap-4">

@@ -19,6 +19,7 @@ import { Badge } from "@/components/ui/badge";
 import { Separator } from "@/components/ui/separator";
 import { Plus, Trash2, Eye, EyeOff, ExternalLink } from "lucide-react";
 import { RichTextEditor } from "@/components/ui/rich-text-editor";
+import { Breadcrumb } from "@/components/admin/breadcrumb";
 
 interface ModuleFormData {
   title_pt: string;
@@ -82,11 +83,23 @@ export default function AdminModuleEditPage() {
     is_published: false,
   });
 
+  const [courseTitle, setCourseTitle] = useState("");
   const [questions, setQuestions] = useState<QuestionData[]>([]);
 
   const supabase = createClient();
 
   const fetchModule = useCallback(async () => {
+    // Fetch course title for breadcrumb
+    const { data: courseData } = await supabase
+      .from("courses")
+      .select("title_pt, title_en")
+      .eq("id", courseId)
+      .single();
+
+    if (courseData) {
+      setCourseTitle(locale === "en" ? courseData.title_en : courseData.title_pt);
+    }
+
     const { data: mod } = await supabase
       .from("modules")
       .select("*")
@@ -142,7 +155,7 @@ export default function AdminModuleEditPage() {
     }
 
     setLoading(false);
-  }, [moduleId, supabase]);
+  }, [courseId, locale, moduleId, supabase]);
 
   useEffect(() => {
     fetchModule();
@@ -373,6 +386,14 @@ export default function AdminModuleEditPage() {
           {toast.message}
         </div>
       )}
+
+      <Breadcrumb
+        items={[
+          { label: t("courses"), href: "/admin/courses" },
+          { label: courseTitle || t("courses"), href: `/admin/courses/${courseId}` },
+          { label: (locale === "en" ? moduleData.title_en : moduleData.title_pt) || t("editModule") },
+        ]}
+      />
 
       <div>
         <h1 className="font-merriweather text-3xl font-bold tracking-tight">

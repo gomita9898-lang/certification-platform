@@ -4,6 +4,7 @@ import { useEffect, useState, useCallback } from "react";
 import { useParams } from "next/navigation";
 import { useTranslations } from "next-intl";
 import { createClient } from "@/lib/supabase/client";
+import { useToast } from "@/components/ui/toast";
 import {
   Card,
   CardHeader,
@@ -14,6 +15,7 @@ import {
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
+import { Breadcrumb } from "@/components/admin/breadcrumb";
 
 interface SettingsForm {
   default_pass_threshold: string;
@@ -39,10 +41,7 @@ export default function AdminSettingsPage() {
 
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
-  const [toast, setToast] = useState<{
-    message: string;
-    type: "success" | "error";
-  } | null>(null);
+  const { showToast } = useToast();
 
   const [form, setForm] = useState<SettingsForm>({
     default_pass_threshold: "70",
@@ -76,11 +75,6 @@ export default function AdminSettingsPage() {
     fetchSettings();
   }, [fetchSettings]);
 
-  const showToast = (message: string, type: "success" | "error") => {
-    setToast({ message, type });
-    setTimeout(() => setToast(null), 3000);
-  };
-
   const handleSave = async () => {
     setSaving(true);
     try {
@@ -112,16 +106,7 @@ export default function AdminSettingsPage() {
 
   return (
     <div className="space-y-8">
-      {/* Toast notification */}
-      {toast && (
-        <div
-          className={`fixed right-4 top-4 z-50 rounded-md px-4 py-3 text-sm font-medium text-white shadow-lg transition-all ${
-            toast.type === "success" ? "bg-success" : "bg-destructive"
-          }`}
-        >
-          {toast.message}
-        </div>
-      )}
+      <Breadcrumb items={[{ label: t("settings") }]} />
 
       <div>
         <h1 className="font-merriweather text-3xl font-bold tracking-tight">

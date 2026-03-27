@@ -16,6 +16,7 @@ import { Link, usePathname, useRouter } from "@/lib/i18n/routing";
 import { createClient } from "@/lib/supabase/client";
 import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
+import { ThemeToggle } from "@/components/ui/theme-toggle";
 import type { UserRole } from "@/types/database";
 
 interface HeaderProps {
@@ -47,7 +48,7 @@ export function Header({ role, userName, locale }: HeaderProps) {
   }
 
   return (
-    <header className="sticky top-0 z-50 border-b bg-white/95 backdrop-blur supports-[backdrop-filter]:bg-white/80">
+    <header className="sticky top-0 z-50 border-b bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/80">
       <div className="mx-auto flex h-16 max-w-7xl items-center justify-between px-4 sm:px-6 lg:px-8">
         {/* Logo */}
         <Link href="/dashboard" className="flex items-center gap-2.5">
@@ -101,6 +102,9 @@ export function Header({ role, userName, locale }: HeaderProps) {
             <span className="uppercase">{otherLocale}</span>
           </Link>
 
+          {/* Theme Toggle */}
+          <ThemeToggle />
+
           {/* User Dropdown */}
           <div className="relative hidden md:block">
             <button
@@ -126,7 +130,7 @@ export function Header({ role, userName, locale }: HeaderProps) {
                   className="fixed inset-0 z-40"
                   onClick={() => setUserMenuOpen(false)}
                 />
-                <div className="absolute right-0 z-50 mt-1 w-48 rounded-md border bg-white py-1 shadow-lg">
+                <div className="absolute right-0 z-50 mt-1 w-48 rounded-md border bg-card py-1 shadow-lg">
                   <Link
                     href="/profile"
                     onClick={() => setUserMenuOpen(false)}
@@ -165,7 +169,7 @@ export function Header({ role, userName, locale }: HeaderProps) {
 
       {/* Mobile Menu */}
       {mobileMenuOpen && (
-        <div className="border-t bg-white md:hidden">
+        <div className="border-t bg-background md:hidden">
           <nav className="mx-auto max-w-7xl space-y-1 px-4 pb-4 pt-2">
             {role !== "admin" && navLinks.map((link) => (
               <Link

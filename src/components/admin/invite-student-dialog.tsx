@@ -8,6 +8,7 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Send, Plus, CheckCircle, Mail } from "lucide-react";
 import { getLocalizedField } from "@/lib/utils";
+import { useToast } from "@/components/ui/toast";
 
 interface Course {
   id: string;
@@ -30,22 +31,15 @@ export function InviteStudentDialog({
   const tCommon = useTranslations("common");
   const router = useRouter();
 
+  const { showToast } = useToast();
+
   const [open, setOpen] = useState(false);
   const [loading, setLoading] = useState(false);
-  const [toast, setToast] = useState<{
-    message: string;
-    type: "success" | "error";
-  } | null>(null);
   const [sentEmail, setSentEmail] = useState<string | null>(null);
 
   const [fullName, setFullName] = useState("");
   const [email, setEmail] = useState("");
   const [courseId, setCourseId] = useState("");
-
-  const showToast = (message: string, type: "success" | "error") => {
-    setToast({ message, type });
-    setTimeout(() => setToast(null), 4000);
-  };
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -103,17 +97,6 @@ export function InviteStudentDialog({
 
   return (
     <>
-      {/* Toast notification */}
-      {toast && (
-        <div
-          className={`fixed right-4 top-4 z-50 rounded-md px-4 py-3 text-sm font-medium text-white shadow-lg transition-all ${
-            toast.type === "success" ? "bg-success" : "bg-destructive"
-          }`}
-        >
-          {toast.message}
-        </div>
-      )}
-
       <Button onClick={() => setOpen(true)}>
         <Plus className="mr-2 h-4 w-4" />
         {t("inviteStudent")}

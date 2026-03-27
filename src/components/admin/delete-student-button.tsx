@@ -4,6 +4,7 @@ import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { Button } from "@/components/ui/button";
 import { Trash2 } from "lucide-react";
+import { useToast } from "@/components/ui/toast";
 
 interface DeleteStudentButtonProps {
   studentId: string;
@@ -18,6 +19,7 @@ export function DeleteStudentButton({
 }: DeleteStudentButtonProps) {
   const [loading, setLoading] = useState(false);
   const router = useRouter();
+  const { showToast } = useToast();
 
   const handleDelete = async () => {
     const confirmMsg = locale === "en"
@@ -36,13 +38,17 @@ export function DeleteStudentButton({
 
       if (!res.ok) {
         const data = await res.json();
-        alert(data.error || "Failed to delete student");
+        showToast(data.error || (locale === "en" ? "Failed to delete student" : "Erro ao eliminar aluno"), "error");
         return;
       }
 
+      showToast(
+        locale === "en" ? "Student deleted successfully" : "Aluno eliminado com sucesso",
+        "success"
+      );
       router.refresh();
     } catch {
-      alert(locale === "en" ? "Failed to delete student" : "Erro ao eliminar aluno");
+      showToast(locale === "en" ? "Failed to delete student" : "Erro ao eliminar aluno", "error");
     } finally {
       setLoading(false);
     }

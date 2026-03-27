@@ -13,6 +13,7 @@ import { Users, ChevronRight } from "lucide-react";
 import { formatDate } from "@/lib/utils";
 import { InviteStudentDialog } from "@/components/admin/invite-student-dialog";
 import { DeleteStudentButton } from "@/components/admin/delete-student-button";
+import { Breadcrumb } from "@/components/admin/breadcrumb";
 
 export default async function AdminStudentsPage({
   params,
@@ -66,6 +67,7 @@ export default async function AdminStudentsPage({
 
   return (
     <div className="space-y-8">
+      <Breadcrumb items={[{ label: t("students") }]} />
       <div className="flex items-center justify-between">
         <div>
           <h1 className="font-merriweather text-3xl font-bold tracking-tight">
