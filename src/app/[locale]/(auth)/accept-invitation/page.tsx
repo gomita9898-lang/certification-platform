@@ -31,8 +31,13 @@ export default function AcceptInvitationPage() {
     e.preventDefault();
     setError("");
 
+    if (password.length < 8) {
+      setError(t("passwordTooShort"));
+      return;
+    }
+
     if (password !== confirmPassword) {
-      setError(t("invalidCredentials"));
+      setError(t("passwordsMismatch"));
       return;
     }
 

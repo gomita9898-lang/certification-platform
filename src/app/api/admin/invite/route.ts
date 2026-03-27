@@ -1,15 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 import { createClient, createAdminClient } from "@/lib/supabase/server";
 
-function generatePassword(): string {
-  const chars = "ABCDEFGHJKLMNPQRSTUVWXYZabcdefghjkmnpqrstuvwxyz23456789";
-  let password = "";
-  for (let i = 0; i < 12; i++) {
-    password += chars.charAt(Math.floor(Math.random() * chars.length));
-  }
-  return password;
-}
-
 export async function POST(request: NextRequest) {
   try {
     // Verify the requesting user is an admin
@@ -88,58 +79,44 @@ export async function POST(request: NextRequest) {
 
       return NextResponse.json({
         success: true,
-        message: "Existing user enrolled in course",
-        user_id: existingProfile.id,
+        message: "existing_enrolled",
       });
     }
 
-    // Create new user with generated password
-    const password = generatePassword();
+    // Invite new user — sends email with activation link
+    const appUrl = process.env.NEXT_PUBLIC_APP_URL || "http://localhost:3000";
+    const redirectTo = `${appUrl}/api/auth/callback?next=/pt/accept-invitation`;
 
-    const { data: newUser, error: createError } =
-      await adminSupabase.auth.admin.createUser({
-        email,
-        password,
-        email_confirm: true,
-        user_metadata: {
+    const { data: inviteData, error: inviteError } =
+      await adminSupabase.auth.admin.inviteUserByEmail(email, {
+        data: {
           full_name,
           role: "student",
           locale: "pt",
         },
+        redirectTo,
       });
 
-    if (createError) {
-      console.error("Create user error:", createError);
+    if (inviteError) {
+      console.error("Invite error:", inviteError);
       return NextResponse.json(
-        { error: createError.message },
-        { status: 500 }
-      );
-    }
-
-    if (!newUser?.user) {
-      return NextResponse.json(
-        { error: "Failed to create user" },
+        { error: inviteError.message },
         { status: 500 }
       );
     }
 
     // Enroll in course
-    await adminSupabase.from("enrollments").insert({
-      user_id: newUser.user.id,
-      course_id,
-    });
+    if (inviteData?.user) {
+      await adminSupabase.from("enrollments").insert({
+        user_id: inviteData.user.id,
+        course_id,
+      });
+    }
 
-    // Send welcome email with credentials via Supabase
-    // For now, return the credentials so the admin can share them
     return NextResponse.json({
       success: true,
-      message: "Student created and enrolled successfully",
-      user_id: newUser.user.id,
-      credentials: {
-        email,
-        password,
-        note: "Share these credentials with the student. They can change their password after logging in.",
-      },
+      message: "invited",
+      email,
     });
   } catch (error) {
     console.error("Invite error:", error);

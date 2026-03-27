@@ -52,6 +52,8 @@
     "acceptInvitation": "Accept invitation",
     "acceptInvitationTitle": "Set up your account",
     "acceptInvitationSubtitle": "Set your password to access the platform",
+    "passwordTooShort": "Password must be at least 8 characters.",
+    "passwordsMismatch": "Passwords do not match.",
     "invalidCredentials": "Invalid credentials. Check your email and password.",
     "sessionExpired": "Your session has expired. Please log in again.",
     "passwordUpdated": "Password updated successfully.",

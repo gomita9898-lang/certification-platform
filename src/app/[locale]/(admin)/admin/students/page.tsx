@@ -12,6 +12,7 @@ import { Link } from "@/lib/i18n/routing";
 import { Users, ChevronRight } from "lucide-react";
 import { formatDate } from "@/lib/utils";
 import { InviteStudentDialog } from "@/components/admin/invite-student-dialog";
+import { DeleteStudentButton } from "@/components/admin/delete-student-button";
 
 export default async function AdminStudentsPage({
   params,
@@ -135,12 +136,19 @@ export default async function AdminStudentsPage({
                         {formatDate(student.lastActivity, locale)}
                       </td>
                       <td className="px-4 py-3">
-                        <Link
-                          href={`/admin/students/${student.id}`}
-                          className="inline-flex items-center text-sm text-primary hover:underline"
-                        >
-                          <ChevronRight className="h-4 w-4" />
-                        </Link>
+                        <div className="flex items-center gap-1">
+                          <Link
+                            href={`/admin/students/${student.id}`}
+                            className="inline-flex items-center text-sm text-primary hover:underline"
+                          >
+                            <ChevronRight className="h-4 w-4" />
+                          </Link>
+                          <DeleteStudentButton
+                            studentId={student.id}
+                            studentName={student.full_name}
+                            locale={locale}
+                          />
+                        </div>
                       </td>
                     </tr>
                   ))}

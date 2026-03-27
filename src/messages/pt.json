@@ -52,6 +52,8 @@
     "acceptInvitation": "Aceitar convite",
     "acceptInvitationTitle": "Configurar a sua conta",
     "acceptInvitationSubtitle": "Defina a sua palavra-passe para aceder à plataforma",
+    "passwordTooShort": "A palavra-passe deve ter pelo menos 8 caracteres.",
+    "passwordsMismatch": "As palavras-passe não coincidem.",
     "invalidCredentials": "Credenciais inválidas. Verifique o seu e-mail e palavra-passe.",
     "sessionExpired": "A sua sessão expirou. Inicie sessão novamente.",
     "passwordUpdated": "Palavra-passe atualizada com sucesso.",

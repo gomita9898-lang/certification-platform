@@ -6,7 +6,7 @@ import { useRouter } from "next/navigation";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { Send, Plus, Copy, CheckCircle } from "lucide-react";
+import { Send, Plus, CheckCircle, Mail } from "lucide-react";
 import { getLocalizedField } from "@/lib/utils";
 
 interface Course {
@@ -20,11 +20,6 @@ interface Course {
 interface InviteStudentDialogProps {
   courses: Course[];
   locale: string;
-}
-
-interface Credentials {
-  email: string;
-  password: string;
 }
 
 export function InviteStudentDialog({
@@ -41,8 +36,7 @@ export function InviteStudentDialog({
     message: string;
     type: "success" | "error";
   } | null>(null);
-  const [credentials, setCredentials] = useState<Credentials | null>(null);
-  const [copied, setCopied] = useState(false);
+  const [sentEmail, setSentEmail] = useState<string | null>(null);
 
   const [fullName, setFullName] = useState("");
   const [email, setEmail] = useState("");
@@ -76,9 +70,9 @@ export function InviteStudentDialog({
         throw new Error(data.error || "Failed to invite student");
       }
 
-      if (data.credentials) {
-        // New user created — show credentials
-        setCredentials(data.credentials);
+      if (data.message === "invited") {
+        // New user — email sent
+        setSentEmail(email.trim().toLowerCase());
       } else {
         // Existing user enrolled
         showToast(
@@ -88,7 +82,6 @@ export function InviteStudentDialog({
           "success"
         );
         handleClose();
-        router.refresh();
       }
     } catch (err) {
       const message =
@@ -99,21 +92,12 @@ export function InviteStudentDialog({
     }
   };
 
-  const handleCopyCredentials = async () => {
-    if (!credentials) return;
-    const text = `Email: ${credentials.email}\nPassword: ${credentials.password}`;
-    await navigator.clipboard.writeText(text);
-    setCopied(true);
-    setTimeout(() => setCopied(false), 2000);
-  };
-
   const handleClose = () => {
     setOpen(false);
-    setCredentials(null);
+    setSentEmail(null);
     setFullName("");
     setEmail("");
     setCourseId("");
-    setCopied(false);
     router.refresh();
   };
 
@@ -138,70 +122,56 @@ export function InviteStudentDialog({
       {/* Modal overlay */}
       {open && (
         <div className="fixed inset-0 z-50 flex items-center justify-center">
-          {/* Backdrop */}
           <div
             className="fixed inset-0 bg-black/50"
-            onClick={credentials ? undefined : () => setOpen(false)}
+            onClick={sentEmail ? undefined : () => setOpen(false)}
           />
 
-          {/* Dialog */}
           <div className="relative z-10 w-full max-w-md rounded-lg border bg-card p-6 shadow-xl">
-            {credentials ? (
-              /* Credentials screen */
+            {sentEmail ? (
+              /* Email sent confirmation */
               <div className="space-y-5">
                 <div className="text-center">
-                  <CheckCircle className="mx-auto mb-3 h-10 w-10 text-success" />
+                  <div className="mx-auto mb-3 flex h-14 w-14 items-center justify-center rounded-full bg-success/10">
+                    <Mail className="h-7 w-7 text-success" />
+                  </div>
                   <h2 className="font-merriweather text-xl font-bold">
-                    {locale === "en" ? "Student Created!" : "Aluno Criado!"}
+                    {locale === "en" ? "Invitation Sent!" : "Convite Enviado!"}
                   </h2>
-                  <p className="mt-1 text-sm text-muted-foreground">
+                  <p className="mt-2 text-sm text-muted-foreground">
                     {locale === "en"
-                      ? "Share these credentials with the student so they can log in."
-                      : "Partilhe estas credenciais com o aluno para que possa iniciar sessão."}
+                      ? `An activation email has been sent to`
+                      : `Um email de ativação foi enviado para`}
+                  </p>
+                  <p className="mt-1 font-mono text-sm font-semibold">
+                    {sentEmail}
                   </p>
                 </div>
 
-                <div className="rounded-md border bg-muted/50 p-4 space-y-3">
-                  <div>
-                    <p className="text-xs font-semibold uppercase tracking-wider text-muted-foreground">
-                      Email
-                    </p>
-                    <p className="mt-1 font-mono text-sm font-medium">
-                      {credentials.email}
-                    </p>
-                  </div>
-                  <div>
-                    <p className="text-xs font-semibold uppercase tracking-wider text-muted-foreground">
-                      {locale === "en" ? "Password" : "Palavra-passe"}
-                    </p>
-                    <p className="mt-1 font-mono text-sm font-medium">
-                      {credentials.password}
-                    </p>
-                  </div>
+                <div className="rounded-md border bg-muted/50 p-4 text-sm text-muted-foreground space-y-2">
+                  <p className="flex items-start gap-2">
+                    <CheckCircle className="mt-0.5 h-4 w-4 shrink-0 text-success" />
+                    {locale === "en"
+                      ? "The student will receive an email with a link to activate their account."
+                      : "O aluno receberá um email com um link para ativar a sua conta."}
+                  </p>
+                  <p className="flex items-start gap-2">
+                    <CheckCircle className="mt-0.5 h-4 w-4 shrink-0 text-success" />
+                    {locale === "en"
+                      ? "They will set their own password on first access."
+                      : "O aluno definirá a sua própria palavra-passe no primeiro acesso."}
+                  </p>
+                  <p className="flex items-start gap-2">
+                    <CheckCircle className="mt-0.5 h-4 w-4 shrink-0 text-success" />
+                    {locale === "en"
+                      ? "They are automatically enrolled in the selected course."
+                      : "O aluno é automaticamente inscrito no curso selecionado."}
+                  </p>
                 </div>
 
-                <div className="flex gap-3">
-                  <Button
-                    variant="outline"
-                    className="flex-1"
-                    onClick={handleCopyCredentials}
-                  >
-                    {copied ? (
-                      <>
-                        <CheckCircle className="mr-2 h-4 w-4 text-success" />
-                        {locale === "en" ? "Copied!" : "Copiado!"}
-                      </>
-                    ) : (
-                      <>
-                        <Copy className="mr-2 h-4 w-4" />
-                        {locale === "en" ? "Copy credentials" : "Copiar credenciais"}
-                      </>
-                    )}
-                  </Button>
-                  <Button className="flex-1" onClick={handleClose}>
-                    {locale === "en" ? "Done" : "Concluído"}
-                  </Button>
-                </div>
+                <Button className="w-full" onClick={handleClose}>
+                  {locale === "en" ? "Done" : "Concluído"}
+                </Button>
               </div>
             ) : (
               /* Invite form */
