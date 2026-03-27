@@ -11,12 +11,13 @@ export async function GET(request: NextRequest) {
 
   const supabase = await createClient();
 
-  // Handle OAuth/PKCE code exchange
+  // Handle OAuth/PKCE code exchange (used by Supabase after email link click)
   if (code) {
     const { error } = await supabase.auth.exchangeCodeForSession(code);
     if (!error) {
       return NextResponse.redirect(`${origin}${next}`);
     }
+    console.error("Code exchange error:", error);
   }
 
   // Handle token-based auth (invite, recovery, email confirmation)
@@ -27,17 +28,19 @@ export async function GET(request: NextRequest) {
     });
 
     if (!error) {
-      // For invites, redirect to set-password page
       if (type === "invite") {
-        return NextResponse.redirect(`${origin}/pt/accept-invitation`);
+        return NextResponse.redirect(`${origin}/pt/setup-account`);
       }
-      // For recovery, redirect to set-password page too
       if (type === "recovery") {
-        return NextResponse.redirect(`${origin}/pt/accept-invitation`);
+        return NextResponse.redirect(`${origin}/pt/setup-account`);
       }
       return NextResponse.redirect(`${origin}${next}`);
     }
+    console.error("OTP verification error:", error);
   }
 
-  return NextResponse.redirect(`${origin}/pt/login?error=auth`);
+  // If we reach here, try the hash fragment approach
+  // Supabase sometimes sends tokens as hash fragments which the server can't read
+  // Redirect to a client-side page that can handle hash fragments
+  return NextResponse.redirect(`${origin}/pt/auth-handler?next=${encodeURIComponent(next)}`);
 }

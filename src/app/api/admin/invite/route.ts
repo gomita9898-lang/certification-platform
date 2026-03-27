@@ -85,7 +85,7 @@ export async function POST(request: NextRequest) {
 
     // Invite new user — sends email with activation link
     const appUrl = process.env.NEXT_PUBLIC_APP_URL || "http://localhost:3000";
-    const redirectTo = `${appUrl}/api/auth/callback?next=/pt/accept-invitation`;
+    const redirectTo = `${appUrl}/api/auth/callback?next=/pt/setup-account`;
 
     const { data: inviteData, error: inviteError } =
       await adminSupabase.auth.admin.inviteUserByEmail(email, {

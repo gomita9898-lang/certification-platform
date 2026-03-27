@@ -40,7 +40,7 @@ export async function updateSession(request: NextRequest) {
   const locale = localeMatch ? localeMatch[1] : "pt";
 
   // Auth pages that don't require login
-  const authPages = [`/${locale}/login`, `/${locale}/reset-password`, `/${locale}/accept-invitation`];
+  const authPages = [`/${locale}/login`, `/${locale}/reset-password`, `/${locale}/accept-invitation`, `/${locale}/setup-account`, `/${locale}/auth-handler`];
   const isAuthPage = authPages.some((page) => pathname.startsWith(page));
   const isApiRoute = pathname.startsWith("/api");
   const isVerifyPage = pathname.includes("/verify/");
@@ -55,6 +55,12 @@ export async function updateSession(request: NextRequest) {
     const url = request.nextUrl.clone();
     url.pathname = `/${locale}/login`;
     return NextResponse.redirect(url);
+  }
+
+  // Allow setup-account and auth-handler even with active session
+  const isSetupPage = pathname.includes("/setup-account") || pathname.includes("/auth-handler");
+  if (isSetupPage) {
+    return supabaseResponse;
   }
 
   // Redirect authenticated users away from auth pages
