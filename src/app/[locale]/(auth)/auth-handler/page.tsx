@@ -21,15 +21,17 @@ export default function AuthHandlerPage() {
       const supabase = createClient();
       const next = searchParams.get("next") ?? "/pt/dashboard";
 
-      // Check if we already have a session (from the server callback)
+      // Sign out any existing session first (prevents admin session interference)
+      await supabase.auth.signOut();
+
+      // Wait briefly for Supabase to process hash fragment tokens
+      await new Promise((resolve) => setTimeout(resolve, 500));
+
+      // Try to get the new session (from hash fragment token exchange)
       const { data: { session } } = await supabase.auth.getSession();
 
       if (session) {
-        // Check if this is an invite (user has no password set yet / just invited)
-        const isInvite = session.user?.user_metadata?.role === "student" &&
-          !session.user?.user_metadata?.password_set;
-
-        if (isInvite || next.includes("setup-account")) {
+        if (next.includes("setup-account")) {
           router.push("/pt/setup-account");
         } else {
           router.push(next);
@@ -37,29 +39,9 @@ export default function AuthHandlerPage() {
         return;
       }
 
-      // Try to get session from hash fragment (Supabase auth callback)
-      // The Supabase client automatically reads the hash fragment
-      const { data, error } = await supabase.auth.getSession();
-
-      if (error) {
-        console.error("Auth handler error:", error);
-        setStatus("Erro de autenticação. A redirecionar...");
-        setTimeout(() => router.push("/pt/login?error=auth"), 2000);
-        return;
-      }
-
-      if (data.session) {
-        const type = new URLSearchParams(window.location.hash.substring(1)).get("type");
-
-        if (type === "invite" || type === "recovery") {
-          router.push("/pt/setup-account");
-        } else {
-          router.push(next);
-        }
-      } else {
-        setStatus("Sessão não encontrada. A redirecionar...");
-        setTimeout(() => router.push("/pt/login?error=auth"), 2000);
-      }
+      // No session established
+      setStatus("Sessão não encontrada. A redirecionar...");
+      setTimeout(() => router.push("/pt/login?error=auth"), 2000);
     }
 
     handleAuth();

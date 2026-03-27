@@ -11,10 +11,19 @@ export async function GET(request: NextRequest) {
 
   const supabase = await createClient();
 
-  // Handle OAuth/PKCE code exchange (used by Supabase after email link click)
+  // For invite and recovery flows, sign out any existing session first
+  // This prevents the admin's session from interfering when testing invite links
+  if (type === "invite" || type === "recovery" || next.includes("setup-account")) {
+    await supabase.auth.signOut();
+  }
+
+  // Handle OAuth/PKCE code exchange
   if (code) {
     const { error } = await supabase.auth.exchangeCodeForSession(code);
     if (!error) {
+      if (next.includes("setup-account")) {
+        return NextResponse.redirect(`${origin}/pt/setup-account`);
+      }
       return NextResponse.redirect(`${origin}${next}`);
     }
     console.error("Code exchange error:", error);
@@ -28,10 +37,7 @@ export async function GET(request: NextRequest) {
     });
 
     if (!error) {
-      if (type === "invite") {
-        return NextResponse.redirect(`${origin}/pt/setup-account`);
-      }
-      if (type === "recovery") {
+      if (type === "invite" || type === "recovery") {
         return NextResponse.redirect(`${origin}/pt/setup-account`);
       }
       return NextResponse.redirect(`${origin}${next}`);
@@ -39,8 +45,6 @@ export async function GET(request: NextRequest) {
     console.error("OTP verification error:", error);
   }
 
-  // If we reach here, try the hash fragment approach
-  // Supabase sometimes sends tokens as hash fragments which the server can't read
-  // Redirect to a client-side page that can handle hash fragments
+  // Fallback: redirect to client-side handler for hash fragments
   return NextResponse.redirect(`${origin}/pt/auth-handler?next=${encodeURIComponent(next)}`);
 }

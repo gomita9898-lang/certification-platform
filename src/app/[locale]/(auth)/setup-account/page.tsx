@@ -86,6 +86,17 @@ export default function SetupAccountPage() {
       const { data: { user } } = await supabase.auth.getUser();
 
       if (user) {
+        // Safety check: if this is an admin session, sign out and show error
+        if (user.user_metadata?.role === "admin") {
+          await supabase.auth.signOut();
+          setError(
+            locale === "pt"
+              ? "Sessão de administrador detectada. Abra o link do convite numa janela privada/anónima do navegador."
+              : "Admin session detected. Open the invite link in a private/incognito browser window."
+          );
+          return;
+        }
+
         setEmail(user.email ?? "");
         setFullName(user.user_metadata?.full_name ?? "");
         setSessionReady(true);
