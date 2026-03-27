@@ -18,78 +18,69 @@ export async function GET(
       return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
     }
 
-    // Fetch certificate with related data (use admin client to bypass RLS)
     const admin = await createAdminClient();
+
+    // Fetch certificate
     const { data: certificate, error } = await admin
       .from("certificates")
-      .select(
-        `
-        *,
-        profiles:user_id (full_name, locale),
-        courses:course_id (title_pt, title_en)
-      `,
-      )
+      .select("*")
       .eq("id", certificateId)
-      .single() as { data: {
-        id: string;
-        user_id: string;
-        course_id: string;
-        exam_attempt_id: string;
-        certificate_code: string;
-        score_percentage: number;
-        issued_at: string;
-        profiles: { full_name: string; locale: string } | null;
-        courses: { title_pt: string; title_en: string } | null;
-      } | null; error: any };
+      .single();
 
     if (error || !certificate) {
       return NextResponse.json({ error: "Certificate not found" }, { status: 404 });
     }
 
     // Only allow the certificate owner or admins to download
-    const { data: profile } = await supabase
+    const { data: userProfile } = await admin
       .from("profiles")
       .select("role")
       .eq("id", user.id)
       .single();
 
-    if (certificate.user_id !== user.id && profile?.role !== "admin") {
+    if (certificate.user_id !== user.id && userProfile?.role !== "admin") {
       return NextResponse.json({ error: "Forbidden" }, { status: 403 });
     }
 
-    // Fetch app settings for certificate
-    const { data: settings } = await admin.from("app_settings").select("key, value");
+    // Fetch student profile
+    const { data: studentProfile } = await admin
+      .from("profiles")
+      .select("full_name, locale")
+      .eq("id", certificate.user_id)
+      .single();
+
+    // Fetch course
+    const { data: course } = await admin
+      .from("courses")
+      .select("title_pt, title_en")
+      .eq("id", certificate.course_id)
+      .single();
+
+    // Fetch app settings
+    const { data: settings } = await admin
+      .from("app_settings")
+      .select("key, value");
 
     const settingsMap: Record<string, string> = {};
-    settings?.forEach((s) => {
+    settings?.forEach((s: { key: string; value: string }) => {
       settingsMap[s.key] = s.value;
     });
-
-    const certProfiles = certificate.profiles as unknown as {
-      full_name: string;
-      locale: string;
-    };
-    const certCourses = certificate.courses as unknown as {
-      title_pt: string;
-      title_en: string;
-    };
 
     const verificationUrl = `${process.env.NEXT_PUBLIC_APP_URL}/api/certificates/verify/${certificate.certificate_code}`;
 
     const html = await generateCertificateHTML({
-      studentName: certProfiles.full_name,
-      courseTitlePt: certCourses.title_pt,
-      courseTitleEn: certCourses.title_en,
+      studentName: studentProfile?.full_name ?? "",
+      courseTitlePt: course?.title_pt ?? "",
+      courseTitleEn: course?.title_en ?? "",
       scorePercentage: certificate.score_percentage,
       certificateCode: certificate.certificate_code,
       issuedAt: certificate.issued_at,
       issuerName: settingsMap["certificate_issuer_name"] || "",
       institutionName: settingsMap["certificate_institution"] || "",
       verificationUrl,
-      locale: certProfiles.locale || "pt",
+      locale: studentProfile?.locale || "pt",
     });
 
-    // Return HTML that can be printed to PDF by the browser
     return new NextResponse(html, {
       headers: {
         "Content-Type": "text/html; charset=utf-8",
