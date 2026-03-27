@@ -1,5 +1,5 @@
 import { getTranslations } from "next-intl/server";
-import { createClient } from "@/lib/supabase/server";
+import { createAdminClient } from "@/lib/supabase/server";
 import { FileSpreadsheet } from "lucide-react";
 import { getLocalizedField } from "@/lib/utils";
 import { ReportsClient } from "@/components/admin/reports-client";
@@ -11,7 +11,7 @@ export default async function AdminReportsPage({
 }) {
   const { locale } = await params;
   const t = await getTranslations("reports");
-  const supabase = await createClient();
+  const supabase = await createAdminClient();
 
   // ---- Fetch all data in parallel ----
 

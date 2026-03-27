@@ -1,5 +1,5 @@
 import { getTranslations } from "next-intl/server";
-import { createClient } from "@/lib/supabase/server";
+import { createAdminClient } from "@/lib/supabase/server";
 import {
   Card,
   CardHeader,
@@ -23,7 +23,7 @@ export default async function AdminStudentDetailPage({
   const t = await getTranslations("admin");
   const tCourse = await getTranslations("course");
 
-  const supabase = await createClient();
+  const supabase = await createAdminClient();
 
   // Fetch student profile
   const { data: student } = await supabase

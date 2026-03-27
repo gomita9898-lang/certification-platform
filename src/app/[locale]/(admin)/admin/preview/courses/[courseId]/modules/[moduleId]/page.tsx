@@ -1,5 +1,5 @@
 import { getTranslations } from "next-intl/server";
-import { createClient } from "@/lib/supabase/server";
+import { createAdminClient } from "@/lib/supabase/server";
 import { redirect } from "next/navigation";
 import { getLocalizedField, getYouTubeEmbedUrl } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
@@ -16,7 +16,7 @@ export default async function ModulePreviewPage({
 }) {
   const { locale, courseId, moduleId } = await params;
   const t = await getTranslations("course");
-  const supabase = await createClient();
+  const supabase = await createAdminClient();
 
   // Verify admin access
   const {

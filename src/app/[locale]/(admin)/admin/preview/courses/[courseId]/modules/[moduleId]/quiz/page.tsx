@@ -1,5 +1,5 @@
 import { getTranslations } from "next-intl/server";
-import { createClient } from "@/lib/supabase/server";
+import { createAdminClient } from "@/lib/supabase/server";
 import { redirect } from "next/navigation";
 import { getLocalizedField } from "@/lib/utils";
 import {
@@ -22,7 +22,7 @@ export default async function QuizPreviewPage({
   const t = await getTranslations("quiz");
   const tCourse = await getTranslations("course");
   const tPreview = await getTranslations("admin.preview");
-  const supabase = await createClient();
+  const supabase = await createAdminClient();
 
   // Verify admin access
   const {

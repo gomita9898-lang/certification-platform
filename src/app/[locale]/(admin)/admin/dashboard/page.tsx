@@ -1,5 +1,5 @@
 import { getTranslations } from "next-intl/server";
-import { createClient } from "@/lib/supabase/server";
+import { createAdminClient } from "@/lib/supabase/server";
 import {
   Card,
   CardHeader,
@@ -20,7 +20,7 @@ export default async function AdminDashboardPage({
   const t = await getTranslations("admin");
   const tStats = await getTranslations("admin.stats");
 
-  const supabase = await createClient();
+  const supabase = await createAdminClient();
 
   // Fetch all stats in parallel
   const [

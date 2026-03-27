@@ -1,5 +1,5 @@
 import { getTranslations } from "next-intl/server";
-import { createClient } from "@/lib/supabase/server";
+import { createClient, createAdminClient } from "@/lib/supabase/server";
 import {
   Card,
   CardHeader,
@@ -22,10 +22,10 @@ export default async function AdminStudentsPage({
   const t = await getTranslations("admin");
   const tCommon = await getTranslations("common");
 
-  const supabase = await createClient();
+  const admin = await createAdminClient();
 
   // Get all students with their enrollment counts
-  const { data: students } = await supabase
+  const { data: students } = await admin
     .from("profiles")
     .select(
       "id, full_name, email, created_at, enrollments(id, completed_at, enrolled_at)"
@@ -60,7 +60,7 @@ export default async function AdminStudentsPage({
   });
 
   // Fetch courses for invite dialog
-  const { data: courses } = await supabase
+  const { data: courses } = await admin
     .from("courses")
     .select("id, title_pt, title_en, is_published")
     .eq("is_published", true)

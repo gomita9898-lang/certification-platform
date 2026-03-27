@@ -327,6 +327,11 @@ export default function AdminModuleEditPage() {
         return updated;
       });
 
+      // Also activate the module so question is visible to students
+      if (!moduleData.is_published) {
+        await handleSaveModule(true);
+      }
+
       showToast(t("savedSuccessfully"), "success");
     } catch {
       showToast(tCommon("error"), "error");

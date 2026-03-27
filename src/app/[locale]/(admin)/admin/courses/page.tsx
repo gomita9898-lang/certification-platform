@@ -1,5 +1,5 @@
 import { getTranslations } from "next-intl/server";
-import { createClient } from "@/lib/supabase/server";
+import { createAdminClient } from "@/lib/supabase/server";
 import {
   Card,
   CardHeader,
@@ -21,7 +21,7 @@ export default async function AdminCoursesPage({
   const t = await getTranslations("admin");
   const tCommon = await getTranslations("common");
 
-  const supabase = await createClient();
+  const supabase = await createAdminClient();
 
   // Get courses with module counts and enrollment counts
   const { data: courses } = await supabase
