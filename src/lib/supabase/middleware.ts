@@ -59,8 +59,17 @@ export async function updateSession(request: NextRequest) {
 
   // Redirect authenticated users away from auth pages
   if (user && isAuthPage) {
+    // Check if user is admin to redirect to admin dashboard
+    const { data: profileData } = await supabase
+      .from("profiles")
+      .select("role")
+      .eq("id", user.id)
+      .single();
+
     const url = request.nextUrl.clone();
-    url.pathname = `/${locale}/dashboard`;
+    url.pathname = profileData?.role === "admin"
+      ? `/${locale}/admin/dashboard`
+      : `/${locale}/dashboard`;
     return NextResponse.redirect(url);
   }
 
