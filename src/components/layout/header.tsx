@@ -75,7 +75,7 @@ export function Header({ role, userName, locale }: HeaderProps) {
           ))}
           {role === "admin" && (
             <Link
-              href="/admin"
+              href="/admin/dashboard"
               className={cn(
                 "flex items-center gap-1.5 rounded-md px-3 py-2 text-sm font-medium transition-colors hover:bg-secondary hover:text-primary",
                 pathname.startsWith("/admin")
@@ -184,7 +184,7 @@ export function Header({ role, userName, locale }: HeaderProps) {
             ))}
             {role === "admin" && (
               <Link
-                href="/admin"
+                href="/admin/dashboard"
                 onClick={() => setMobileMenuOpen(false)}
                 className={cn(
                   "flex items-center gap-1.5 rounded-md px-3 py-2 text-sm font-medium transition-colors",
