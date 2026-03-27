@@ -209,6 +209,7 @@
     "isExamQuestion": "Final exam question",
     "orderIndex": "Order",
     "savedSuccessfully": "Saved successfully",
+    "moduleActivated": "Module saved and activated successfully",
     "previewAsStudent": "Preview as student",
     "preview": {
       "banner": "PREVIEW MODE — This is how students will see this content",

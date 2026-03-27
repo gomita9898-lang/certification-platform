@@ -18,6 +18,7 @@ import { Label } from "@/components/ui/label";
 import { Badge } from "@/components/ui/badge";
 import { Separator } from "@/components/ui/separator";
 import { Plus, Trash2, Eye, EyeOff, ExternalLink } from "lucide-react";
+import { RichTextEditor } from "@/components/ui/rich-text-editor";
 
 interface ModuleFormData {
   title_pt: string;
@@ -152,28 +153,32 @@ export default function AdminModuleEditPage() {
     setTimeout(() => setToast(null), 3000);
   };
 
-  const handleSaveModule = async () => {
+  const handleSaveModule = async (publish?: boolean) => {
     if (!moduleData.title_pt || !moduleData.title_en) return;
 
     setSaving(true);
     try {
-      const { error } = await supabase
-        .from("modules")
-        .update({
-          title_pt: moduleData.title_pt,
-          title_en: moduleData.title_en,
-          description_pt: moduleData.description_pt,
-          description_en: moduleData.description_en,
-          content_pt: moduleData.content_pt,
-          content_en: moduleData.content_en,
-          video_url: moduleData.video_url || null,
-          order_index: moduleData.order_index,
-          is_published: moduleData.is_published,
-        })
-        .eq("id", moduleId);
+      const dataToSave = {
+        ...moduleData,
+        is_published: publish !== undefined ? publish : moduleData.is_published,
+      };
 
-      if (error) throw error;
-      showToast(t("savedSuccessfully"), "success");
+      const response = await fetch("/api/admin/save-module", {
+        method: "PUT",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ moduleId, data: dataToSave }),
+      });
+
+      if (!response.ok) throw new Error("Failed to save");
+
+      if (publish !== undefined) {
+        setModuleData((prev) => ({ ...prev, is_published: publish }));
+      }
+
+      showToast(
+        publish ? t("moduleActivated") : t("savedSuccessfully"),
+        "success",
+      );
     } catch {
       showToast(tCommon("error"), "error");
     } finally {
@@ -283,64 +288,28 @@ export default function AdminModuleEditPage() {
     if (!activeOptions.some((o) => o.is_correct)) return;
 
     try {
-      let questionId = q.id;
-
-      if (q._isNew) {
-        const { data, error } = await supabase
-          .from("questions")
-          .insert({
-            module_id: moduleId,
-            course_id: courseId,
+      const response = await fetch("/api/admin/save-question", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          question: {
+            id: q.id,
+            _isNew: q._isNew,
             question_pt: q.question_pt,
             question_en: q.question_en,
-            explanation_pt: q.explanation_pt || null,
-            explanation_en: q.explanation_en || null,
+            explanation_pt: q.explanation_pt,
+            explanation_en: q.explanation_en,
             order_index: q.order_index,
-          })
-          .select()
-          .single();
+          },
+          options: q.options,
+          moduleId,
+          courseId,
+        }),
+      });
 
-        if (error) throw error;
-        questionId = data.id;
-      } else {
-        const { error } = await supabase
-          .from("questions")
-          .update({
-            question_pt: q.question_pt,
-            question_en: q.question_en,
-            explanation_pt: q.explanation_pt || null,
-            explanation_en: q.explanation_en || null,
-            order_index: q.order_index,
-          })
-          .eq("id", questionId!);
+      if (!response.ok) throw new Error("Failed to save question");
 
-        if (error) throw error;
-      }
-
-      // Handle options
-      for (const opt of q.options) {
-        if (opt._deleted && opt.id) {
-          await supabase.from("question_options").delete().eq("id", opt.id);
-        } else if (opt._isNew || !opt.id) {
-          await supabase.from("question_options").insert({
-            question_id: questionId!,
-            text_pt: opt.text_pt,
-            text_en: opt.text_en,
-            is_correct: opt.is_correct,
-            order_index: opt.order_index,
-          });
-        } else {
-          await supabase
-            .from("question_options")
-            .update({
-              text_pt: opt.text_pt,
-              text_en: opt.text_en,
-              is_correct: opt.is_correct,
-              order_index: opt.order_index,
-            })
-            .eq("id", opt.id);
-        }
-      }
+      const { questionId } = await response.json();
 
       // Update local state
       setQuestions((prev) => {
@@ -369,8 +338,11 @@ export default function AdminModuleEditPage() {
 
     const q = questions[index];
     if (q.id) {
-      await supabase.from("question_options").delete().eq("question_id", q.id);
-      await supabase.from("questions").delete().eq("id", q.id);
+      await fetch("/api/admin/save-question", {
+        method: "DELETE",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ questionId: q.id }),
+      });
     }
 
     setQuestions((prev) => prev.filter((_, i) => i !== index));
@@ -467,31 +439,29 @@ export default function AdminModuleEditPage() {
 
           <div className="grid gap-6 md:grid-cols-2">
             <div className="space-y-2">
-              <Label htmlFor="content_pt">{t("contentPt")}</Label>
-              <textarea
-                id="content_pt"
-                className="flex min-h-[200px] w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50"
-                value={moduleData.content_pt}
-                onChange={(e) =>
+              <Label>{t("contentPt")}</Label>
+              <RichTextEditor
+                content={moduleData.content_pt}
+                onChange={(html) =>
                   setModuleData((prev) => ({
                     ...prev,
-                    content_pt: e.target.value,
+                    content_pt: html,
                   }))
                 }
+                placeholder="Escreva o conteúdo do módulo aqui..."
               />
             </div>
             <div className="space-y-2">
-              <Label htmlFor="content_en">{t("contentEn")}</Label>
-              <textarea
-                id="content_en"
-                className="flex min-h-[200px] w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50"
-                value={moduleData.content_en}
-                onChange={(e) =>
+              <Label>{t("contentEn")}</Label>
+              <RichTextEditor
+                content={moduleData.content_en}
+                onChange={(html) =>
                   setModuleData((prev) => ({
                     ...prev,
-                    content_en: e.target.value,
+                    content_en: html,
                   }))
                 }
+                placeholder="Write the module content here..."
               />
             </div>
           </div>
@@ -556,10 +526,30 @@ export default function AdminModuleEditPage() {
             </div>
           </div>
         </CardContent>
-        <CardFooter className="flex gap-3">
-          <Button onClick={handleSaveModule} disabled={saving}>
+        <CardFooter className="flex flex-wrap gap-3">
+          <Button onClick={() => handleSaveModule()} disabled={saving}>
             {saving ? tCommon("loading") : tCommon("save")}
           </Button>
+          {!moduleData.is_published ? (
+            <Button
+              variant="default"
+              className="bg-success hover:bg-success/90"
+              onClick={() => handleSaveModule(true)}
+              disabled={saving}
+            >
+              <Eye className="mr-1.5 h-4 w-4" />
+              {locale === "en" ? "Save & Activate" : "Guardar e Ativar"}
+            </Button>
+          ) : (
+            <Button
+              variant="outline"
+              onClick={() => handleSaveModule(false)}
+              disabled={saving}
+            >
+              <EyeOff className="mr-1.5 h-4 w-4" />
+              {locale === "en" ? "Deactivate" : "Desativar"}
+            </Button>
+          )}
           <Button
             variant="outline"
             asChild
