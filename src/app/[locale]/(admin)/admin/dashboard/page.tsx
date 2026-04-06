@@ -10,6 +10,7 @@ import {
 import { Badge } from "@/components/ui/badge";
 import { Users, BookOpen, Award, BarChart3 } from "lucide-react";
 import { formatDate, formatPercentage } from "@/lib/utils";
+import { Breadcrumb } from "@/components/admin/breadcrumb";
 
 export default async function AdminDashboardPage({
   params,
@@ -122,7 +123,8 @@ export default async function AdminDashboardPage({
   ];
 
   return (
-    <div className="space-y-8">
+    <div className="space-y-8 animate-in fade-in slide-in-from-bottom-4 duration-300">
+      <Breadcrumb items={[{ label: t("dashboard") }]} />
       <div>
         <h1 className="font-merriweather text-3xl font-bold tracking-tight">
           {t("dashboard")}
@@ -132,8 +134,12 @@ export default async function AdminDashboardPage({
 
       {/* Stats cards */}
       <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
-        {stats.map((stat) => (
-          <Card key={stat.label}>
+        {stats.map((stat, index) => (
+          <Card
+            key={stat.label}
+            className="animate-in fade-in slide-in-from-bottom-2 fill-mode-both"
+            style={{ animationDelay: `${index * 75}ms`, animationDuration: "300ms" }}
+          >
             <CardHeader className="flex flex-row items-center justify-between pb-2">
               <CardDescription className="text-sm font-medium">
                 {stat.label}

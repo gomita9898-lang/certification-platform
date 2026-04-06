@@ -52,7 +52,7 @@ export default async function AdminCoursesPage({
   }));
 
   return (
-    <div className="space-y-8">
+    <div className="space-y-8 animate-in fade-in slide-in-from-bottom-4 duration-300">
       <Breadcrumb items={[{ label: t("courses") }]} />
       <div className="flex items-center justify-between">
         <div>
@@ -78,7 +78,7 @@ export default async function AdminCoursesPage({
         </Card>
       ) : (
         <div className="grid gap-4">
-          {courseList.map((course) => {
+          {courseList.map((course, index) => {
             const title = getLocalizedField(course, "title", locale);
             const description = getLocalizedField(
               course,
@@ -87,7 +87,11 @@ export default async function AdminCoursesPage({
             );
 
             return (
-              <Card key={course.id}>
+              <Card
+                key={course.id}
+                className="animate-in fade-in slide-in-from-bottom-2 fill-mode-both"
+                style={{ animationDelay: `${index * 75}ms`, animationDuration: "300ms" }}
+              >
                 <CardHeader className="flex flex-row items-start justify-between gap-4">
                   <div className="min-w-0 flex-1 space-y-1">
                     <div className="flex items-center gap-3">

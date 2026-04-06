@@ -290,7 +290,12 @@
     "unauthorized": "Unauthorized access",
     "unauthorizedMessage": "You do not have permission to access this page.",
     "networkError": "Connection error. Check your internet connection.",
-    "validationError": "Please check the information entered."
+    "validationError": "Please check the information entered.",
+    "errorTitle": "Something went wrong",
+    "errorDescription": "An unexpected error occurred while loading this page.",
+    "tryAgain": "Try again",
+    "goHome": "Go to home page",
+    "skipToContent": "Skip to main content"
   },
   "reports": {
     "title": "Reports",

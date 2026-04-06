@@ -157,6 +157,8 @@ export function Header({ role, userName, locale }: HeaderProps) {
             size="icon"
             className="md:hidden"
             onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
+            aria-label={mobileMenuOpen ? "Close menu" : "Open menu"}
+            aria-expanded={mobileMenuOpen}
           >
             {mobileMenuOpen ? (
               <X className="h-5 w-5" />
@@ -169,7 +171,7 @@ export function Header({ role, userName, locale }: HeaderProps) {
 
       {/* Mobile Menu */}
       {mobileMenuOpen && (
-        <div className="border-t bg-background md:hidden">
+        <div className="border-t bg-background md:hidden animate-in slide-in-from-top-2 fade-in duration-200">
           <nav className="mx-auto max-w-7xl space-y-1 px-4 pb-4 pt-2">
             {role !== "admin" && navLinks.map((link) => (
               <Link
@@ -202,6 +204,20 @@ export function Header({ role, userName, locale }: HeaderProps) {
               </Link>
             )}
             <div className="my-2 border-t" />
+            {/* Mobile user info */}
+            {userName && (
+              <div className="flex items-center gap-2 px-3 py-2">
+                <div className="flex h-8 w-8 items-center justify-center rounded-full bg-primary text-xs font-semibold text-primary-foreground">
+                  {userName
+                    .split(" ")
+                    .map((n) => n[0])
+                    .join("")
+                    .slice(0, 2)
+                    .toUpperCase()}
+                </div>
+                <span className="text-sm font-medium">{userName}</span>
+              </div>
+            )}
             <Link
               href="/profile"
               onClick={() => setMobileMenuOpen(false)}

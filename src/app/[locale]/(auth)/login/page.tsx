@@ -16,6 +16,7 @@ import {
 } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
+import { AlertCircle } from "lucide-react";
 
 export default function LoginPage() {
   const t = useTranslations("auth");
@@ -26,12 +27,24 @@ export default function LoginPage() {
   const [password, setPassword] = useState("");
   const [showPassword, setShowPassword] = useState(false);
   const [error, setError] = useState("");
+  const [fieldErrors, setFieldErrors] = useState<{ email?: string; password?: string }>({});
   const [loading, setLoading] = useState(false);
 
   async function handleLogin(e: React.FormEvent) {
     e.preventDefault();
     setError("");
+    setFieldErrors({});
     setLoading(true);
+
+    // Field-level validation
+    const errors: { email?: string; password?: string } = {};
+    if (!email.trim()) errors.email = t("email") + " is required";
+    if (!password) errors.password = t("password") + " is required";
+    if (Object.keys(errors).length > 0) {
+      setFieldErrors(errors);
+      setLoading(false);
+      return;
+    }
 
     try {
       const supabase = createClient();
@@ -100,11 +113,20 @@ export default function LoginPage() {
               type="email"
               placeholder="name@example.com"
               value={email}
-              onChange={(e) => setEmail(e.target.value)}
+              onChange={(e) => { setEmail(e.target.value); setFieldErrors((prev) => ({ ...prev, email: undefined })); }}
               required
               autoComplete="email"
               autoFocus
+              aria-invalid={fieldErrors.email ? true : undefined}
+              aria-describedby={fieldErrors.email ? "email-error" : undefined}
+              className={fieldErrors.email ? "border-destructive focus-visible:ring-destructive" : ""}
             />
+            {fieldErrors.email && (
+              <p id="email-error" className="flex items-center gap-1.5 text-xs text-destructive" role="alert">
+                <AlertCircle className="h-3 w-3 shrink-0" />
+                {fieldErrors.email}
+              </p>
+            )}
           </div>
 
           <div className="space-y-2">
@@ -122,10 +144,12 @@ export default function LoginPage() {
                 id="password"
                 type={showPassword ? "text" : "password"}
                 value={password}
-                onChange={(e) => setPassword(e.target.value)}
+                onChange={(e) => { setPassword(e.target.value); setFieldErrors((prev) => ({ ...prev, password: undefined })); }}
                 required
                 autoComplete="current-password"
-                className="pr-10"
+                className={`pr-10 ${fieldErrors.password ? "border-destructive focus-visible:ring-destructive" : ""}`}
+                aria-invalid={fieldErrors.password ? true : undefined}
+                aria-describedby={fieldErrors.password ? "password-error" : undefined}
               />
               <button
                 type="button"
@@ -136,6 +160,12 @@ export default function LoginPage() {
                 {showPassword ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
               </button>
             </div>
+            {fieldErrors.password && (
+              <p id="password-error" className="flex items-center gap-1.5 text-xs text-destructive" role="alert">
+                <AlertCircle className="h-3 w-3 shrink-0" />
+                {fieldErrors.password}
+              </p>
+            )}
           </div>
         </CardContent>
 

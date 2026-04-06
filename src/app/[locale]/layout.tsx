@@ -4,6 +4,7 @@ import { NextIntlClientProvider } from "next-intl";
 import { getMessages } from "next-intl/server";
 import { routing } from "@/lib/i18n/routing";
 import { ToastProvider } from "@/components/ui/toast";
+import { TooltipProvider } from "@/components/ui/tooltip";
 import "@/app/globals.css";
 
 const inter = Inter({
@@ -46,9 +47,17 @@ export default async function LocaleLayout({
       </head>
       <body className={`${inter.className} antialiased`}>
         <NextIntlClientProvider messages={messages}>
-          <ToastProvider>
-            {children}
-          </ToastProvider>
+          <TooltipProvider>
+            <ToastProvider>
+              <a
+                href="#main-content"
+                className="sr-only focus:not-sr-only focus:fixed focus:left-4 focus:top-4 focus:z-[200] focus:rounded-md focus:bg-primary focus:px-4 focus:py-2 focus:text-sm focus:font-medium focus:text-primary-foreground focus:shadow-lg"
+              >
+                {locale === "pt" ? "Saltar para o conteúdo principal" : "Skip to main content"}
+              </a>
+              {children}
+            </ToastProvider>
+          </TooltipProvider>
         </NextIntlClientProvider>
       </body>
     </html>

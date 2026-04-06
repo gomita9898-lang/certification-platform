@@ -110,7 +110,7 @@ export default async function DashboardPage({
   const studentName = profile?.full_name ?? "";
 
   return (
-    <div className="mx-auto max-w-5xl px-4 py-12">
+    <div className="mx-auto max-w-5xl px-4 py-12 animate-in fade-in slide-in-from-bottom-4 duration-300">
       <div className="mb-10">
         <h1 className="font-merriweather text-3xl font-bold tracking-tight text-primary">
           {t("welcome", { name: studentName })}
@@ -174,7 +174,7 @@ export default async function DashboardPage({
           </Card>
         ) : (
           <div className="grid gap-6 md:grid-cols-2">
-            {courses.map((course) => {
+            {courses.map((course, index) => {
               const progressPercent =
                 course.modules_count > 0
                   ? Math.round(
@@ -216,7 +216,11 @@ export default async function DashboardPage({
               }
 
               return (
-                <Card key={course.id} className="flex flex-col">
+                <Card
+                  key={course.id}
+                  className="flex flex-col animate-in fade-in slide-in-from-bottom-2 fill-mode-both"
+                  style={{ animationDelay: `${index * 75}ms`, animationDuration: "300ms" }}
+                >
                   <CardHeader>
                     <div className="flex items-start justify-between gap-2">
                       <CardTitle className="text-lg">{course.title}</CardTitle>

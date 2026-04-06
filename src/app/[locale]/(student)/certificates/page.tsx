@@ -77,7 +77,7 @@ export default async function CertificatesPage({
   }));
 
   return (
-    <div className="mx-auto max-w-4xl px-4 py-12">
+    <div className="mx-auto max-w-4xl px-4 py-12 animate-in fade-in slide-in-from-bottom-4 duration-300">
       <div className="mb-10">
         <h1 className="font-merriweather text-3xl font-bold tracking-tight text-primary">
           {t("myCertificates")}

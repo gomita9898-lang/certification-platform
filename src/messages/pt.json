@@ -290,7 +290,12 @@
     "unauthorized": "Acesso não autorizado",
     "unauthorizedMessage": "Não tem permissão para aceder a esta página.",
     "networkError": "Erro de ligação. Verifique a sua ligação à Internet.",
-    "validationError": "Verifique os dados introduzidos."
+    "validationError": "Verifique os dados introduzidos.",
+    "errorTitle": "Algo correu mal",
+    "errorDescription": "Ocorreu um erro inesperado ao carregar esta página.",
+    "tryAgain": "Tentar novamente",
+    "goHome": "Ir para a página inicial",
+    "skipToContent": "Saltar para o conteúdo principal"
   },
   "reports": {
     "title": "Relatórios",
